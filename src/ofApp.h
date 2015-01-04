@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxMaxim.h"
+#include "Filter.h"
 
 
 class ofApp : public ofBaseApp{
@@ -38,6 +39,6 @@ public:
     ofxMaxiFFT fft;
     float* buffer;
     float screenRatio;
-    
+    Filter filter;
     
 };

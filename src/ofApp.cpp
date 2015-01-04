@@ -29,7 +29,7 @@ void ofApp::setup(){
     sampleRate 			= 44100; /* Sampling Rate */
     initialBufferSize	= 512;	/* Buffer Size. you have to fill this buffer with sound*/
     
-    
+    filter = *new Filter(300,350, "lowres");
     buffer = new float[initialBufferSize];
     beat.load(ofToDataPath("song1.wav"));
     screenRatio = (float)ofGetWidth()/(initialBufferSize/2);
@@ -48,6 +48,7 @@ void ofApp::draw(){
     for(int i =0; i < fft.bins; i++){
         ofLine(i*screenRatio, ofGetHeight()/2 - 3*fft.magnitudes[i], (i+1)*screenRatio, ofGetHeight()/2 - 3*fft.magnitudes[i+1]);
     }
+    filter.draw();
 }
 
 //--------------------------------------------------------------
@@ -56,7 +57,8 @@ void ofApp::audioRequested 	(float * output, int bufferSize, int nChannels){
     for (int i = 0; i < bufferSize; i++){
         
         sample=beat.play();
-//        buffer[i] = sample;
+
+        sample = filter.process(sample);
         fft.process(sample);
         mymix.stereo(sample, outputs, 0.5);
         
