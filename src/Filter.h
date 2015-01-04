@@ -23,12 +23,16 @@ public:
     void setResValue(double value);
     void setCutOffValue(double value);
     bool isInBounds(int x, int y);
+    void activate();
+    void deactivate();
+    bool isActivated();
     
     int x,y,w,h;
     int resValue, resRange;
     int cutOffValue, cutOffRange;
     string type;
     maxiFilter fil;
+    bool active;
 };
 
 #endif /* defined(__filterVis__Filter__) */

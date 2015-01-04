@@ -27,13 +27,16 @@ void ofApp::setup(){
     
     sampleRate 			= 44100; /* Sampling Rate */
     initialBufferSize	= 512;	/* Buffer Size. you have to fill this buffer with sound*/
+    numFilters = 2;
+    filters = new Filter[numFilters];
     
-    lofilter = *new Filter(300, 350, "lores");
-    hifilter = *new Filter(300, 350, "hires");
+    filters[0] = *new Filter(100, 200, "lores");
+    filters[1] = *new Filter(100, 200, "hires");
+    filters[0].activate();
     
     buffer = new float[initialBufferSize];
     beat.load(ofToDataPath("song1.wav"));
-    screenRatio = (float)ofGetWidth()/(initialBufferSize/2);
+    screenRatio = ((float)2*ofGetWidth()/3)/(initialBufferSize/2);
     fft.setup(initialBufferSize, initialBufferSize, initialBufferSize);
     ofSoundStreamSetup(2,0,this, sampleRate, initialBufferSize, 4);/* Call this last ! */
 }
@@ -47,9 +50,16 @@ void ofApp::draw(){
     ofBackground(30);
     ofSetColor(200, 200, 200);
     for(int i =0; i < fft.bins; i++){
-        ofLine(i*screenRatio, ofGetHeight()/2 - 3*fft.magnitudes[i], (i+1)*screenRatio, ofGetHeight()/2 - 3*fft.magnitudes[i+1]);
+        ofLine(ofGetWidth()/3 + i*screenRatio, ofGetHeight()/3 - 3*fft.magnitudes[i], ofGetWidth()/3 + (i+1)*screenRatio, ofGetHeight()/3 - 3*fft.magnitudes[i+1]);
     }
-    lofilter.draw();
+    for(int i = 0 ; i < initialBufferSize-1; i++){
+        ofLine(ofGetWidth()/3 + i*screenRatio, 2*ofGetHeight()/3 + 50*buffer[i], ofGetWidth()/3 + (i+1)*screenRatio, 2*ofGetHeight()/3 + 50*buffer[i+1]);
+    }
+    for(int i = 0; i < numFilters; i++){
+        if(filters[i].isActivated()){
+            filters[i].draw();
+        }
+    }
 }
 
 //--------------------------------------------------------------
@@ -59,8 +69,13 @@ void ofApp::audioRequested 	(float * output, int bufferSize, int nChannels){
         
         sample=beat.play();
 
-        sample = lofilter.process(sample);
+        for(int j = 0; j < numFilters; j++){
+            if(filters[j].isActivated()){
+                sample = filters[j].process(sample);
+            }
+        }
         fft.process(sample);
+        buffer[i] = sample;
         mymix.stereo(sample, outputs, 0.5);
         
         output[i*nChannels    ] = outputs[0];
@@ -70,8 +85,7 @@ void ofApp::audioRequested 	(float * output, int bufferSize, int nChannels){
 }
 
 //--------------------------------------------------------------
-void ofApp::audioReceived 	(float * input, int bufferSize, int nChannels){
-    
+void ofApp::audioReceived(float * input, int bufferSize, int nChannels){
     
 }
 
@@ -87,30 +101,33 @@ void ofApp::keyReleased(int key){
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
     
-    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-    if(lofilter.isInBounds(x, y)){
-        int filterX = lofilter.x;
-        int filterY = lofilter.y;
-        int cutoffRange = lofilter.cutOffRange;
-        int resRange = lofilter.resRange;
-        lofilter.setCutOffValue(((float)(x-filterX)/lofilter.w)*cutoffRange);
-        lofilter.setResValue(resRange-(((float)(y-filterY)/lofilter.h)*resRange));
+    for(int i = 0; i < numFilters; i++){
+        if(filters[i].isActivated() && filters[i].isInBounds(x, y)){
+            int filterX = filters[i].x;
+            int filterY = filters[i].y;
+            int cutoffRange = filters[i].cutOffRange;
+            int resRange = filters[i].resRange;
+            filters[i].setCutOffValue(((float)(x-filterX)/filters[i].w)*cutoffRange);
+            filters[i].setResValue(resRange-(((float)(y-filterY)/filters[i].h)*resRange));
+        }
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-    if(lofilter.isInBounds(x, y)){
-        int filterX = lofilter.x;
-        int filterY = lofilter.y;
-        int cutoffRange = lofilter.cutOffRange;
-        int resRange = lofilter.resRange;
-        lofilter.setCutOffValue(((float)(x-filterX)/lofilter.w)*cutoffRange);
-        lofilter.setResValue(resRange-(((float)(y-filterY)/lofilter.h)*resRange));
+    for(int i = 0; i < numFilters; i++){
+        if(filters[i].isActivated() && filters[i].isInBounds(x, y)){
+            int filterX = filters[i].x;
+            int filterY = filters[i].y;
+            int cutoffRange = filters[i].cutOffRange;
+            int resRange = filters[i].resRange;
+            filters[i].setCutOffValue(((float)(x-filterX)/filters[i].w)*cutoffRange);
+            filters[i].setResValue(resRange-(((float)(y-filterY)/filters[i].h)*resRange));
+        }
     }
 }
 
@@ -123,7 +140,6 @@ void ofApp::mouseReleased(int x, int y, int button){
 void ofApp::windowResized(int w, int h){
     
 }
-
 
 
 //--------------------------------------------------------------
