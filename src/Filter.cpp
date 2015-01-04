@@ -18,12 +18,12 @@ Filter::Filter(int x, int y, string type){
     this->type = type;
     w = h = 200;
     resValue = 1;
-    cutOffRange = 15000;
+    cutOffRange = 18000;
     resRange = 100;
     active = false;
     
     if(type == "lores"){
-        cutOffValue = 15000;
+        cutOffValue = cutOffRange;
     }
     else if(type == "hires"){
         cutOffValue = 0;
@@ -35,14 +35,18 @@ void Filter::draw(){
     ofSetColor(200, 0, 0);
     ofRect(x, y, w, h);
     ofSetColor(200, 200, 200);
-    ofCircle(x + w*((float)cutOffValue/cutOffRange), y + h - h*((float)resValue/resRange), 4);
+    circleX = x + w*((float)cutOffValue/cutOffRange);
+    circleY = y + h - h*((float)resValue/resRange);
+    ofCircle(circleX, circleY, 4);
+    ofDrawBitmapString("(" + ofToString(cutOffValue) + "," + ofToString(resValue) + ")", circleX+10, circleY+5);
     if(type == "lores"){
         ofDrawBitmapString("Low-pass filter", x+45, y-15);
     }else{
         ofDrawBitmapString("High-pass filter", x+45, y-15);
     }
-    ofDrawBitmapString("Frequency", x + 60, y + h + 15);
+    ofDrawBitmapString("Cutoff Frequency (Hz)", x + 20, y + h + 15);
     ofDrawBitmapString("Resonance", x - 80, y + h/2);
+    
 }
 
 double Filter::process(double sample){

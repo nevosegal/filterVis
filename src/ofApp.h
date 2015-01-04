@@ -41,5 +41,6 @@ public:
     float screenRatio;
     Filter* filters;
     int numFilters;
+    Button* btns;
     
 };

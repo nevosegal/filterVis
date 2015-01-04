@@ -29,10 +29,13 @@ void ofApp::setup(){
     initialBufferSize	= 512;	/* Buffer Size. you have to fill this buffer with sound*/
     numFilters = 2;
     filters = new Filter[numFilters];
+    btns = new Button[numFilters];
     
     filters[0] = *new Filter(100, 200, "lores");
     filters[1] = *new Filter(100, 200, "hires");
     filters[0].activate();
+    btns[0] = *new Button(100, 120);
+    btns[1] = *new Button(150, 120);
     
     buffer = new float[initialBufferSize];
     beat.load(ofToDataPath("song1.wav"));
@@ -59,6 +62,7 @@ void ofApp::draw(){
         if(filters[i].isActivated()){
             filters[i].draw();
         }
+        btns[i].draw();
     }
 }
 
@@ -127,6 +131,14 @@ void ofApp::mousePressed(int x, int y, int button){
             int resRange = filters[i].resRange;
             filters[i].setCutOffValue(((float)(x-filterX)/filters[i].w)*cutoffRange);
             filters[i].setResValue(resRange-(((float)(y-filterY)/filters[i].h)*resRange));
+        }
+        else if(btns[i].isInBounds(x, y)){
+            filters[i].activate();
+            for(int j = 0 ; j < numFilters; j++){
+                if(i!=j){
+                    filters[j].deactivate();
+                }
+            }
         }
     }
 }

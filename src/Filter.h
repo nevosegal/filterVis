@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "ofMain.h"
 #include "ofxMaxim.h"
+#include "Button.h"
 
 class Filter{
 public:
@@ -33,6 +34,7 @@ public:
     string type;
     maxiFilter fil;
     bool active;
+    float circleX, circleY;
 };
 
 #endif /* defined(__filterVis__Filter__) */
