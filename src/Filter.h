@@ -25,8 +25,8 @@ public:
     bool isInBounds(int x, int y);
     
     int x,y,w,h;
-    double resValue;
-    double cutOffValue;
+    int resValue, resRange;
+    int cutOffValue, cutOffRange;
     string type;
     maxiFilter fil;
 };

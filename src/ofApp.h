@@ -39,6 +39,7 @@ public:
     ofxMaxiFFT fft;
     float* buffer;
     float screenRatio;
-    Filter filter;
+    Filter lofilter;
+    Filter hifilter;
     
 };
