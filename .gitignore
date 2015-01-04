@@ -1,3 +1,7 @@
+#Audio Files
+*.wav
+*.mp3
+
 # Compiled Object files
 *.slo
 *.lo
