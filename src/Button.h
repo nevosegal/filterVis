@@ -14,17 +14,22 @@
 
 class Button{
 public:
+    
+    //constructors
     Button();
     Button(int x,int y, string type);
     
+    //class methods
     void draw();
     bool isInBounds(int x, int y);
     void activate();
     void deactivate();
     bool isActivated();
     
+    //class variables
     int x,y,w,h;
     bool active;
     string type;
+    ofImage img;
 };
 #endif /* defined(__filterVis__Button__) */

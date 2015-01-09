@@ -16,9 +16,12 @@
 
 class Filter{
 public:
+    
+    //constructors
     Filter();
     Filter(int x, int y, string type);
     
+    //class methods
     void draw();
     double process(double sample);
     void setResValue(double value);
@@ -28,6 +31,7 @@ public:
     void deactivate();
     bool isActivated();
     
+    //class variables
     int x,y,w,h;
     int resValue, resRange;
     int cutOffValue, cutOffRange;
